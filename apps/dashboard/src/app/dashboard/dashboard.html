@@ -1,1 +1,189 @@
-<p>dashboard works!</p>
+<div class="w-screen h-screen flex flex-col relative">
+  <div class="w-full flex justify-between p-2">
+    <div
+      class="w-12 h-12 p-1 text-2xl text-center text-[white] hover:opacity-60 cursor-pointer"
+      (click)="onThemeChange()"
+    >
+      ◐
+    </div>
+
+    <div
+      class="bg-amber-600 rounded-full w-12 h-12 p-1 text-4xl text-center text-[white] shadow-md hover:opacity-60 cursor-pointer"
+      (click)="onShowProfile()"
+    >
+      {{user?.username?.[0] || "P"}}
+    </div>
+  </div>
+
+  <div
+    class="w-full px-4 flex flex-col md:flex-row justify-center items-center my-24"
+  >
+    <div class="w-full bg-white flex-1 rounded-md shadow-md bg-[#ececec]">
+      <div
+        class="w-full h-fit text-center shadow-md rounded-t-md text-3xl p-2 text-teal-900 bg-white"
+      >
+        PENDING
+      </div>
+
+      <div class="p-4 max-h-[75vh] overflow-y-scroll">
+        @for (task of tasks; track task.id) { @if (task.status == 'pending') {
+        <div
+          class="w-full rounded-md shadow-md bg-white p-2 my-4 cursor-pointer"
+          (click)="onShowTaskForm(task)"
+        >
+          <h1 class="text-xl text-amber-600">
+            {{ task.title }}
+            <span class="text-sm text-teal-900 italic">due on</span> {{
+            task.dueDate }}
+          </h1>
+        </div>
+        } }
+      </div>
+    </div>
+
+    <div class="w-full m-12 bg-white flex-1 rounded-md shadow-md bg-gray-300">
+      <div
+        class="w-full h-fit text-center shadow-md rounded-t-md text-3xl p-2 text-teal-900 bg-white"
+      >
+        IN-PROGRESS
+      </div>
+      <div class="p-4 max-h-[75vh] overflow-y-scroll">
+        @for (task of tasks; track task.id) { @if (task.status == 'in-progress') {
+        <div
+          class="w-full rounded-md shadow-md bg-white p-2 my-4 cursor-pointer"
+          (click)="onShowTaskForm(task)"
+        >
+          <h1 class="text-xl text-amber-600">
+            {{ task.title }}
+            <span class="text-sm text-teal-900 italic">due on</span> {{
+            task.dueDate }}
+          </h1>
+        </div>
+        } }
+      </div>
+    </div>
+
+    <div class="w-full bg-white flex-1 rounded-md shadow-md bg-gray-300">
+      <div
+        class="w-full h-fit text-center shadow-md rounded-t-md text-3xl p-2 text-teal-900 bg-white"
+      >
+        COMPLETED
+      </div>
+
+      <div class="p-4 max-h-[75vh] overflow-y-scroll">
+        @for (task of tasks; track task.id) { @if (task.status == 'completed') {
+        <div
+          class="w-full rounded-md shadow-md bg-white p-2 my-4 cursor-pointer"
+          (click)="onShowTaskForm(task)"
+        >
+          <h1 class="text-xl text-amber-600">
+            {{ task.title }}
+            <span class="text-sm text-teal-900 italic">due on</span> {{
+            task.dueDate }}
+          </h1>
+        </div>
+        } }
+      </div>
+    </div>
+  </div>
+
+  <div class="w-full fixed bottom-0 flex justify-end p-2">
+    <div
+      class="bg-amber-600 rounded-full w-12 h-12 text-4xl text-center text-[white] shadow-md hover:opacity-60 cursor-pointer"
+      (click)="onShowTaskForm(null)"
+    >
+      +
+    </div>
+  </div>
+</div>
+
+<div
+  class="absolute w-[150px] top-5 right-5 bg-white shadow-xl rounded-md p-2"
+  [hidden]="!isProfileShown"
+>
+  <button class="absolute right-2 top-1" (click)="onHideProfile()">×</button>
+  <div class="mt-5">Signed in as</div>
+  <div class="text-amber-600 mb-3">{{user?.username || "u"}}</div>
+  <button
+    class="w-full text-center text-[white] rounded-md shadow-md hover:opacity-60 p-2 bg-amber-600"
+    (click)="onLogout()"
+  >
+    Logout
+  </button>
+</div>
+
+@if (selectedTask !== null) {
+<div
+  class="h-screen w-screen absolute top-0 left-0 bg-black flex justify-center items-center"
+>
+  <div class="bg-white rounded-md shadow-md p-4 relative">
+    <button class="absolute right-2 top-1" (click)="onHideTaskForm()">×</button>
+
+    <form
+      class="m-2 pt-4 flex flex-col gap-2"
+      (ngSubmit)="onCreateOrUpdateTask()"
+    >
+      <div
+        *ngIf="(taskState$ | async)?.error as error"
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
+      >
+        {{error}}
+      </div>
+      <div class="flex flex-col">
+        <label>Title</label>
+        <input
+          placeholder="Task title"
+          name="title"
+          [(ngModel)]="selectedTaskTitle"
+          required
+        />
+      </div>
+
+      <div class="flex flex-col my-2">
+        <label>Due</label>
+        <input
+          type="date"
+          name="dueDate"
+          [(ngModel)]="selectedTaskDueDate"
+          required
+        />
+      </div>
+
+      <div class="flex flex-col my-2">
+        <label>Status</label>
+        <select name="status" [(ngModel)]="selectedTaskStatus">
+          <option value="pending">Pending</option>
+          <option value="in-progress">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col my-2">
+        <label>Description</label>
+        <textarea
+          placeholder="Task Description"
+          name="description"
+          [(ngModel)]="selectedTaskDescription"
+          required
+        ></textarea>
+      </div>
+
+      <input
+        type="submit"
+        class="cursor-pointer text-white bg-amber-600 p-2 rounded-md shadow-md hover:opacity-60 disabled:opacity-50 disabled:cursor-not-allowed"
+        [value]="(taskState$ | async)?.loading ? 'Updating...' : 'Submit'"
+        [disabled]="!selectedTaskTitle || !selectedTaskDueDate || !selectedTaskDescription || (taskState$ | async)?.loading"
+      />
+
+      @if (selectedTask.id) {
+      <input
+        type="button"
+        class="cursor-pointer text-white bg-teal-800 p-2 rounded-md shadow-md hover:opacity-60 disabled:opacity-50 disabled:cursor-not-allowed"
+        [value]="(taskState$ | async)?.loading ? 'Deleting...' : 'Delete'"
+        (click)="onDeleteTask(selectedTask.id)"
+      />
+      }
+    </form>
+  </div>
+</div>
+}

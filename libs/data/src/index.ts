@@ -1,2 +1,2 @@
-export * from './dtos';
+// Export entities and DTOs
 export * from './entities';

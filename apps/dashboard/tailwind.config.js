@@ -8,6 +8,7 @@ module.exports = {
     ...createGlobPatternsForDependencies(__dirname),
   ],
   theme: {
+    darkMode: ['selector', '[data-mode="dark"]'],
     extend: {},
   },
   plugins: [],

@@ -5,4 +5,5 @@ import { Dashboard } from './dashboard';
 export const appRoutes: Route[] = [
   { path: '', component: Login },
   { path: 'dashboard', component: Dashboard },
+  { path: '**', redirectTo: '' },
 ];

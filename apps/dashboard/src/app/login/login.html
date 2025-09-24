@@ -1,24 +1,43 @@
 <div class="w-screen h-screen flex justify-center items-center">
   <div class="bg-white p-4 rounded-md shadow-md">
     <h1 class="text-4xl text-center">
-      STM<span class="text-amber-400">.</span>
+      STM<span class="text-amber-600">.</span>
     </h1>
 
-    <form class="m-2 pt-4 flex flex-col gap-2" onsubmit="">
+    <form class="m-2 pt-4 flex flex-col gap-2" (ngSubmit)="onLogin()">
+      <div
+        *ngIf="(userState$ | async)?.error as error"
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
+      >
+        {{ error }}
+      </div>
+
       <div class="flex flex-col">
         <label>Username</label>
-        <input placeholder="Enter your username..." require />
+        <input
+          placeholder="Enter your username..."
+          name="username"
+          [(ngModel)]="username"
+          required
+        />
       </div>
 
       <div class="flex flex-col my-2">
         <label>Password</label>
-        <input type="password" placeholder="Enter your username..." required />
+        <input
+          type="password"
+          placeholder="Enter your password..."
+          name="password"
+          [(ngModel)]="password"
+          required
+        />
       </div>
 
       <input
         type="submit"
-        class="cursor-pointer bg-amber-400 p-2 rounded-md shadow-md hover:opacity-60"
-        value="Login"
+        class="cursor-pointer text-[white] bg-amber-400 p-2 rounded-md shadow-md hover:opacity-60 disabled:opacity-50 disabled:cursor-not-allowed"
+        [value]="(userState$ | async)?.loading ? 'Logging in...' : 'Login'"
+        [disabled]="!username || !password || (userState$ | async)?.loading"
       />
     </form>
   </div>
