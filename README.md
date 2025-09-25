@@ -1,81 +1,66 @@
-# SmartTaskManager
+# Smart Task Manager
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+## Setup Instructions
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+● Add JWT_SECRET `.env` at root
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-
-## Finish your CI setup
-
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/8JzrrHlYjr)
-
-## Run tasks
-
-To run the dev server for your app, use:
+● How to run both backend and frontend apps
 
 ```sh
-npx nx serve dashboard
+nx serve api # To run backend
+nx serve dashboard # To run frontend
 ```
 
-To create a production bundle:
+● Architecture Overview
 
-```sh
-npx nx build dashboard
+![Architecture](./taskmanager.architecture.svg)
+
+● How roles, permissions, and organization hierarchy work
+
+![RBAC](./taskmanager.rbac.svg)
+
+```
+Ideal RBAC:
+
+Say we have a "parent-org" owned by "Jane"
+
+> As an "owner" Jane has permissions to
+full access the org, as well as add an child
+org to same.
+
+Jane adds a new "child-org-1" and "child-org-2"
+orgs to parent-org, then assigns "Alice" as
+owner of child-org-1 and "John" as owner of
+child-org-2
+
+> Owners also have permissions to add other
+users as "admin"s to their org
+
+Alice adds "Bob" as an administrator for child-
+org-1
+
+> Bob the admin can add/edit/delete tasks in
+the org, and also add other users as "viewer"s
+
+Bob adds John as a viewer for child-org-1
+
+> John can now see all tasks in that org
 ```
 
-To see all available targets to run for a project, run:
+```
+Implemented RBAC:
 
-```sh
-npx nx show project dashboard
+Both users and orgs have been hard-coded, so rbac is only as task level for now.
+
+> Jane's tasks are visible to noone (except Jane)
+> John's tasks are visible only to John himself and Jane
+> Alice and Bob's tasks are visible to everyone
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+● Endpoint list with sample requests/responses
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+There's the usual `POST /api/auth/login` that takes username/password and returns access_token.
 
-## Add new projects
+access_token contains orgId, userId and username.
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/angular:app demo
-```
-
-To generate a new library, use:
-
-```sh
-npx nx g @nx/angular:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Using this token enables CRUD on `/api/task` assuming proper authorizaition is present.
