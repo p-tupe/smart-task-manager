@@ -48,7 +48,8 @@
         IN-PROGRESS
       </div>
       <div class="p-4 max-h-[75vh] overflow-y-scroll">
-        @for (task of tasks; track task.id) { @if (task.status == 'in-progress') {
+        @for (task of tasks; track task.id) { @if (task.status == 'in-progress')
+        {
         <div
           class="w-full rounded-md shadow-md bg-white p-2 my-4 cursor-pointer"
           (click)="onShowTaskForm(task)"
