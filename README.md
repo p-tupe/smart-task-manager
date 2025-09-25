@@ -1,14 +1,17 @@
 # Smart Task Manager
 
+## Video Overview
+
+![Video](./video.mp4)
+
 ## Setup Instructions
 
-● Add JWT_SECRET `.env` at root
-
-● How to run both backend and frontend apps
-
 ```sh
+git clone git@github.com:p-tupe/smart-task-manager.git
+npm install
+mv .env.sample .env # Update .env > JWT_SECRET
 nx serve api # To run backend
-nx serve dashboard # To run frontend
+nx serve dashboard # To run frontend (separately)
 ```
 
 ● Architecture Overview
